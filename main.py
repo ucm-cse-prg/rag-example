@@ -94,8 +94,8 @@ async def upload_pdf(file: UploadFile = File(...)):
 async def generate_questions(k: int = 5, n: int = 4):
     logger.info(f"Generate questions endpoint called with k={k}, n={n}")
     # 1. Retrieve top-n chunks from Qdrant
-    logger.info(f"Retrieving top {n} chunks from vector store.")
-    retriever = vector_store.as_retriever(search_kwargs={"n": n})
+    logger.info(f"Retrieving top {k} chunks from vector store.")
+    retriever = vector_store.as_retriever(search_kwargs={"k": k})
 
     # 2. Initialize Ollama LLM
     logger.info(f"Initializing LLM with model '{OLLAMA_MODEL}'.")
@@ -105,9 +105,9 @@ async def generate_questions(k: int = 5, n: int = 4):
     )
 
     # 3. Build a prompt template for question generation
-    logger.info(f"Building prompt for {k} questions.")
+    logger.info(f"Building prompt for {n} questions.")
     prompt = PromptTemplate.from_template(
-        f"Generate {k} insightful questions based on the following context:\n\n{{context}}"
+        f"Generate {n} insightful questions based on the following context:\n\n{{context}}"
     )
 
     # 4. Create chain to combine retrieved documents into prompt
